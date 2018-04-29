@@ -14,8 +14,7 @@ import re
 
 weather_url = 'https://www.wunderground.com/history/airport/KARB/2017/4/1/DailyHistory.html?req_city=Ann+Arbor&req_state=MI&req_statename=Michigan&reqdb.zip=48103&reqdb.magic=1&reqdb.wmo=99999'
 river_url = 'https://waterdata.usgs.gov/nwis/dv?cb_00010=on&cb_00060=on&cb_00095=on&cb_00300=on&cb_00400=on&format=rdb&site_no=04174518&referred_module=sw&period=&begin_date=2015-03-29&end_date=2018-03-29'
-#later change this so you can input the number of different river no.  Find position of no=, delete the number after, and then you can add a new number there whenever.  Maybe wrap everything in a class that parses all that out
-#also change this when you make it dynamic to incorporate todays date in the end of the website url.  Consider changing start date as well
+#change this when you make it dynamic to incorporate todays date in the end of the website url.  Consider changing start date as well
 
 class WeatherScrape():
     def __init__(self, url):
