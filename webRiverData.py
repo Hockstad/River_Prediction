@@ -5,12 +5,11 @@ Created on Tue May 30 20:19:08 2017
 @author: Ryan
 """
 from pprint import pprint
-from keras.models import Sequential
-from keras.layers import Dense
-
 from urllib.request import urlopen
 from bs4 import BeautifulSoup as bs
 import re
+import pandas as pd
+import time
 
 weather_url = 'https://www.wunderground.com/history/airport/KARB/2017/4/1/DailyHistory.html?req_city=Ann+Arbor&req_state=MI&req_statename=Michigan&reqdb.zip=48103&reqdb.magic=1&reqdb.wmo=99999'
 river_url = 'https://waterdata.usgs.gov/nwis/dv?cb_00010=on&cb_00060=on&cb_00095=on&cb_00300=on&cb_00400=on&format=rdb&site_no=04174518&referred_module=sw&period=&begin_date=2015-03-29&end_date=2018-03-29'
@@ -73,41 +72,23 @@ if __name__ == '__main__':
     
     
     for i, item in enumerate(flow_data):
+        time.sleep(.5)
         weather_object.new_date(item[0])
         flow_data[i] = [weather_object.get_temperature(), weather_object.get_precipitation()] + flow_data[i]  #temp might work as an indicator of season
     
 ##currently, flow_data is [rainfall, date, flow]
 
-    training_x_data = []
-    training_y_data = []
+    data = []
 
-    
     for j in range(len(flow_data)-3):
         #previous 3 days rain/flow are inputs into the NN
         i = j + 3
-        training_x_data += [[flow_data[i-3][0], flow_data[i-2][0], flow_data[i-1][0], flow_data[i-3][1], flow_data[i-2][1], flow_data[i-1][1], flow_data[i-3][3], flow_data[i-2][3], flow_data[i-1][3], flow_data[i][3]]]
+        data += [[flow_data[i-3][0], flow_data[i-2][0], flow_data[i-1][0], flow_data[i-3][1], flow_data[i-2][1], flow_data[i-1][1], flow_data[i-3][3], flow_data[i-2][3], flow_data[i-1][3], flow_data[i][3]]]
         #training_y_data += [flow_data[i][3]]
 
-    f = open('data.txt', 'a')
-    f.write('Temp 3 \t Temp 2 \t Temp 1\t Prec 3\t Prec 2\t Prec 1\t Flow 3\t Flow 2\t Flow 1\t Target Flow\t \n')
-    for i in training_x_data:
-        for j in i:
-            f.write('{}\t'.format(j))
-        f.write('\n')
-    f.close()
-                  
+    headers = ['Temp 3', 'Temp 2', 'Temp 1',  'Prec 3', 'Prec 2', 'Prec 1', 'Flow 3', 'Flow 2', 'Flow 1', 'Target Flow']
 
-'''    
-    test_x_data = training_x_data[-10:]
-    test_y_data = training_y_data[-10:]
-    training_x_data = training_x_data[:-10]
-    training_y_data = training_y_data[:-10]
-    
-    model = Sequential()
-    model.add(Dense(12, input_dim=8, activation='relu'))
-    model.add(Dense(8, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
-''' 
-
+    df = pd.DataFrame(data, columns = headers)
+    df.to_csv('river_data.csv', index=False)
     
     
